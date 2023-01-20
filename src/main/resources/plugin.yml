@@ -1,0 +1,5 @@
+name: XCore
+version: ${project.version}
+author: FourteenDoggo
+main: me.fourteendoggo.xcore.XCore
+api-version: 1.13

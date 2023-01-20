@@ -1,0 +1,9 @@
+mongodb-host: "mongodb://localhost:27017"
+vanish:
+  boss-bar-color: "PURPLE"
+  apply-night-vision: true
+  pickup-items: false
+home-limits:
+  default: 3
+  moderator: 5
+  admin: 10
