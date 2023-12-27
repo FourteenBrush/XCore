@@ -24,7 +24,7 @@ public class Database {
     private final MongoCollection<Document> users;
 
     public Database() {
-        this.client = MongoClients.create(Settings.getMongoHost());
+        this.client = MongoClients.create(Settings.INSTANCE.getMongoHost());
         MongoDatabase database = client.getDatabase("xcore");
         MongoCollection<Document> users = database.getCollection("users");
         if (users == null) {
@@ -64,16 +64,16 @@ public class Database {
     }
 
     public void saveUser(User user) {
-        Document userDocument = new Document("_id", user.getUniqueId());
+        Document userDocument = new Document("_id", user.getId());
         List<Document> homes = new ArrayList<>();
         for (Home home : user.getData().getHomes()) {
-            Location loc = home.location();
+            Location loc = home.getLocation();
             // the world couldn't be unloaded on runtime, meaning this is an invalid home loaded from the database, let the user delete it
             // let's not save these again because calling World::getUID gives a NullPointerException
             if (!loc.isWorldLoaded()) continue;
 
             Document homeDocument = new Document()
-                    .append("name", home.name())
+                    .append("name", home.getName())
                     .append("world", loc.getWorld().getUID())
                     .append("x", loc.getX())
                     .append("y", loc.getY())
@@ -84,11 +84,11 @@ public class Database {
             homes.add(homeDocument);
         }
         userDocument.put("homes", homes);
-        Bson filter = Filters.eq("_id", user.getUniqueId());
+        Bson filter = Filters.eq("_id", user.getId());
         users.replaceOne(filter, userDocument, new ReplaceOptions().upsert(true));
     }
 
     public void deleteHome(Home home) {
-        users.updateOne(Filters.eq("_id", home.owner()), new Document("$pull", new Document("homes", new Document("name", home.name()))));
+        users.updateOne(Filters.eq("_id", home.getOwner()), new Document("$pull", new Document("homes", new Document("name", home.getName()))));
     }
 }
