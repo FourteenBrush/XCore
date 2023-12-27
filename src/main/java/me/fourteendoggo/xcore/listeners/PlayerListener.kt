@@ -2,7 +2,7 @@ package me.fourteendoggo.xcore.listeners
 
 import me.fourteendoggo.xcore.XCore
 import me.fourteendoggo.xcore.commands.vanish.VanishManager
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import me.fourteendoggo.xcore.utils.Settings
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -39,11 +39,11 @@ class PlayerListener(private val core: XCore, private val vanishManager: VanishM
         // check if player was vanished before quitting, if so re-apply it
         val user = userManager.getUser(joinedPlayer.uniqueId)
         if (vanishManager.vanishIfFlagged(user)) {
-            broadcastStaff(joinedPlayer, Lang.JOIN_VANISHED, joinedPlayer.name)
+            broadcastStaff(joinedPlayer, LangKey.JOIN_VANISHED, joinedPlayer.name)
             event.joinMessage = null
         } else {
             // normal player join
-            event.joinMessage = Lang.JOIN_MESSAGE.asString(joinedPlayer.name)
+            event.joinMessage = LangKey.JOIN_MESSAGE.asString(joinedPlayer.name)
         }
     }
 
@@ -54,18 +54,18 @@ class PlayerListener(private val core: XCore, private val vanishManager: VanishM
         // unvanish if player was vanished, re-vanish when rejoining
         // TODO: why?
         if (vanishManager.unvanish(user, check = true, makePersistent = false)) {
-            broadcastStaff(quitPlayer, Lang.QUIT_VANISHED, quitPlayer.name)
+            broadcastStaff(quitPlayer, LangKey.QUIT_VANISHED, quitPlayer.name)
             event.quitMessage = null
         } else {
             // normal player quit
-            event.quitMessage = Lang.QUIT_MESSAGE.asString(quitPlayer.name)
+            event.quitMessage = LangKey.QUIT_MESSAGE.asString(quitPlayer.name)
         }
     }
 
     /**
      * Broadcasts a message to all staff members, ignoring [ignoredPlayer], regardless of their permissions
      */
-    private fun broadcastStaff(ignoredPlayer: Player, message: Lang, vararg args: Any) {
+    private fun broadcastStaff(ignoredPlayer: Player, message: LangKey, vararg args: Any) {
         for (user in userManager) {
             val player = user.player
             if (player !== ignoredPlayer && player.hasPermission("xcore.moderator")) {

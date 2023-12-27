@@ -1,9 +1,10 @@
 package me.fourteendoggo.xcore.utils
 
 import me.fourteendoggo.xcore.XCore
+import org.jetbrains.annotations.Blocking
 import java.util.*
 
-enum class Lang(private val path: String) {
+enum class LangKey(private val path: String) {
     RELOADED_PLUGIN("reloaded-plugin"),
     VANISH_ENABLED("vanish.enabled.for-self"),
     VANISH_ENABLED_FOR_OTHER("vanish.enabled.for-other"),
@@ -27,7 +28,10 @@ enum class Lang(private val path: String) {
     HOME_CREATED("home.created"),
     HOME_DELETED("home.deleted"),
     HOME_NOT_FOUND("home.not-found"),
-    HOME_TELEPORTED("home.teleported");
+    HOME_TELEPORTED("home.teleported"),
+    FARMING_CROP_NOT_READY_YET("farming.crop-not-ready-yet"),
+    FARMING_CANNOT_BREAK_FARMLAND("farming.cannot-break-farmland"),
+    INCORRECT_TOOL("incorrect-tool");
 
     fun asString() = messages[path]!!
 
@@ -37,11 +41,13 @@ enum class Lang(private val path: String) {
         private lateinit var config: Config
         private val messages = HashMap.newHashMap<String, String>(entries.size)
 
+        @Blocking
         fun loadFromDisk(core: XCore) {
             config = Config(core, "lang.yml", true)
             fillMessages()
         }
 
+        @Blocking // potentially
         override fun reload() {
             config.reload()
             fillMessages()
@@ -55,7 +61,8 @@ enum class Lang(private val path: String) {
                 if (message == null) {
                     val defaults = config.defaults!!
                     message = defaults.getString(lang.path)
-                    Objects.requireNonNull(message, "Missing default value for ${lang.path}")
+                    requireNotNull(message) { "Missing default value for ${lang.path}. This is a bug." }
+
                     config[lang.path] = message
                     save = true
                 }

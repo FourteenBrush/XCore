@@ -30,3 +30,7 @@ home:
   deleted: "#83c916Successfully deleted home"
   not-found: "&cYou don't have a home with that name!"
   teleported: "#83c916Successfully teleported to home %s"
+farming:
+  crop-not-ready-yet: "&cThat crop is not ready yet! (age %s/%s)"
+  cannot-break-farmland: "&c# &7You cannot break the farmland!"
+incorrect-tool: "&cPlease use the correct tool for breaking this!"

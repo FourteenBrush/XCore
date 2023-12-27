@@ -9,7 +9,7 @@ class UserManager(private val storage: Storage) : Iterable<User> {
 
     override fun iterator() = users.values.iterator()
 
-    fun getUser(id: UUID) = users[id]!!
+    operator fun get(id: UUID) = users[id]!!
 
     @Blocking // potentially
     fun loadIfAbsent(id: UUID): Boolean {
@@ -18,8 +18,9 @@ class UserManager(private val storage: Storage) : Iterable<User> {
         return uncheckedMap.computeIfAbsent(id, storage::loadUserBlocking) != null
     }
 
-    fun unloadUser(id: UUID) = users.remove(id)!!.also {
-        storage.saveUser(it)
+    fun unloadUser(id: UUID) = users.remove(id)!!.also { user ->
+        storage.saveUser(user)
+        user.invalidate()
     }
 
     @Blocking

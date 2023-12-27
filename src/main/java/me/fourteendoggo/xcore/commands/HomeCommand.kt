@@ -9,7 +9,7 @@ import me.fourteendoggo.xcore.inventory.InventoryGui
 import me.fourteendoggo.xcore.inventory.ItemBuilder
 import me.fourteendoggo.xcore.user.Home
 import me.fourteendoggo.xcore.user.User
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import me.fourteendoggo.xcore.utils.Settings
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -23,25 +23,25 @@ class HomeCommand(private val core: XCore) : BaseCommand() {
         val homesLimit = Settings.getHomesLimit(player)
 
         if (sender.data.homesAmount >= homesLimit) {
-            sender.sendMessage(Lang.HOME_LIMIT_REACHED)
+            sender.sendMessage(LangKey.HOME_LIMIT_REACHED)
             return
         }
         if (!sender.data.addHome(name, player)) {
-            sender.sendMessage(Lang.HOME_ALREADY_EXISTS)
+            sender.sendMessage(LangKey.HOME_ALREADY_EXISTS)
             return
         }
 
-        sender.sendMessage(Lang.HOME_CREATED, name)
+        sender.sendMessage(LangKey.HOME_CREATED, name)
     }
 
     @CommandAlias("delhome")
     @Description("Deletes the home with the given name")
     fun onDeleteHome(sender: User, home: Home?) {
         if (home == null) {
-            sender.sendMessage(Lang.HOME_NOT_FOUND)
+            sender.sendMessage(LangKey.HOME_NOT_FOUND)
         } else {
             val homeDeletion = core.storage.deleteHome(home)
-            homeDeletion.thenRun { sender.sendMessage(Lang.HOME_DELETED) }
+            homeDeletion.thenRun { sender.sendMessage(LangKey.HOME_DELETED) }
         }
     }
 
@@ -51,7 +51,7 @@ class HomeCommand(private val core: XCore) : BaseCommand() {
         val userData = sender.data
 
         if (userData.homesAmount == 0) {
-            sender.sendMessage(Lang.HOME_NO_HOMES_CREATED)
+            sender.sendMessage(LangKey.HOME_NO_HOMES_CREATED)
             return
         }
 
@@ -69,7 +69,7 @@ class HomeCommand(private val core: XCore) : BaseCommand() {
                 lore += "&7Click here to teleport to this home"
                 onClick = {
                     sender.player.teleport(home.location)
-                    sender.sendMessage(Lang.HOME_TELEPORTED, home.name)
+                    sender.sendMessage(LangKey.HOME_TELEPORTED, home.name)
                 }
             } else {
                 material = Material.BARRIER

@@ -2,7 +2,7 @@ package me.fourteendoggo.xcore.commands.vanish
 
 import me.fourteendoggo.xcore.XCore
 import me.fourteendoggo.xcore.user.User
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import me.fourteendoggo.xcore.utils.Reloadable
 import me.fourteendoggo.xcore.utils.Settings
 import me.fourteendoggo.xcore.utils.Utils
@@ -35,10 +35,10 @@ class VanishManager(private val core: XCore) : Iterable<UUID>, Reloadable {
 
     fun toggle(target: User) {
         if (unvanish(target, check = true, makePersistent = true)) {
-            target.sendMessage(Lang.VANISH_DISABLED)
+            target.sendMessage(LangKey.VANISH_DISABLED)
         } else {
             vanish(target, check = false)
-            target.sendMessage(Lang.VANISH_ENABLED)
+            target.sendMessage(LangKey.VANISH_ENABLED)
         }
     }
 
@@ -74,7 +74,7 @@ class VanishManager(private val core: XCore) : Iterable<UUID>, Reloadable {
             player.hidePlayer(core, targetPlayer)
 
             if (broadcastStaff && player.hasPermission(Utils.MODERATOR_PERMISSION_STRING)) {
-                user.sendMessage(Lang.VANISH_ANNOUNCE_TO_MODS, targetPlayer.name)
+                user.sendMessage(LangKey.VANISH_ANNOUNCE_TO_MODS, targetPlayer.name)
             }
         }
         changePlayerState(targetPlayer, true)
@@ -101,7 +101,7 @@ class VanishManager(private val core: XCore) : Iterable<UUID>, Reloadable {
             if (player === targetPlayer || player.canSee(targetPlayer) || !player.hasPermission(Utils.MODERATOR_PERMISSION_STRING)) continue
 
             player.showPlayer(core, targetPlayer)
-            user.sendMessage(Lang.VANISH_ANNOUNCE_TO_MODS, targetPlayer.name)
+            user.sendMessage(LangKey.VANISH_ANNOUNCE_TO_MODS, targetPlayer.name)
         }
         changePlayerState(targetPlayer, false)
         bossBar.removePlayer(targetPlayer)

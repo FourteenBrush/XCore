@@ -6,7 +6,7 @@ import co.aikar.commands.annotation.CommandPermission
 import co.aikar.commands.annotation.Default
 import me.fourteendoggo.xcore.XCore
 import me.fourteendoggo.xcore.user.sendMessage
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import org.bukkit.command.CommandSender
 
 @CommandAlias("reload")
@@ -16,6 +16,6 @@ class ReloadCommand(private val core: XCore) : BaseCommand() {
     @Default
     fun onReload(sender: CommandSender) {
         core.reload()
-        sender.sendMessage(Lang.RELOADED_PLUGIN)
+        sender.sendMessage(LangKey.RELOADED_PLUGIN)
     }
 }

@@ -8,11 +8,16 @@ import me.fourteendoggo.xcore.commands.vanish.VanishCommand
 import me.fourteendoggo.xcore.commands.vanish.VanishManager
 import me.fourteendoggo.xcore.inventory.InventoryManager
 import me.fourteendoggo.xcore.listeners.PlayerListener
+import me.fourteendoggo.xcore.listeners.SkillsListener
+import me.fourteendoggo.xcore.skills.FarmingSkill
+import me.fourteendoggo.xcore.skills.MiningSkill
+import me.fourteendoggo.xcore.skills.SkillsManager
+import me.fourteendoggo.xcore.skills.WoodCuttingSkill
 import me.fourteendoggo.xcore.storage.Storage
 import me.fourteendoggo.xcore.storage.UserManager
 import me.fourteendoggo.xcore.user.Home
 import me.fourteendoggo.xcore.user.User
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import me.fourteendoggo.xcore.utils.Reloadable
 import me.fourteendoggo.xcore.utils.Settings
 import org.bukkit.Bukkit
@@ -25,7 +30,8 @@ class XCore : JavaPlugin() {
     lateinit var userManager: UserManager private set
     private lateinit var vanishManager: VanishManager
     lateinit var inventoryManager: InventoryManager private set
-    private lateinit var reloadableComponents: List<Reloadable>
+    private lateinit var reloadableComponents: Array<Reloadable>
+
     override fun onLoad() {
         reloading = Bukkit.getWorlds().isNotEmpty()
     }
@@ -34,7 +40,7 @@ class XCore : JavaPlugin() {
         saveDefaultConfig()
 
         Settings.loadFromDisk(this)
-        Lang.loadFromDisk(this)
+        LangKey.loadFromDisk(this)
 
         storage = Storage(logger)
         userManager = UserManager(storage)
@@ -44,6 +50,11 @@ class XCore : JavaPlugin() {
         Bukkit.getPluginManager().apply {
             registerEvents(PlayerListener(this@XCore, vanishManager), this@XCore)
             registerEvents(inventoryManager, this@XCore)
+
+            val skillsManager = SkillsManager().apply {
+                addSkills(FarmingSkill, WoodCuttingSkill, MiningSkill)
+            }
+            registerEvents(SkillsListener(userManager, skillsManager), this@XCore)
         }
 
         BukkitCommandManager(this).apply {
@@ -52,12 +63,12 @@ class XCore : JavaPlugin() {
 
             commandContexts.registerIssuerOnlyContext(User::class.java) { ctx ->
                 val player = (ctx.sender as? Player) ?: throw InvalidCommandArgument("Console cannot execute this command")
-                return@registerIssuerOnlyContext userManager.getUser(player.uniqueId)
+                return@registerIssuerOnlyContext userManager[player.uniqueId]
             }
 
             commandContexts.registerContext(Home::class.java) { ctx ->
                 val name = ctx.popFirstArg()
-                val user = userManager.getUser(ctx.player.uniqueId)
+                val user = userManager[ctx.player.uniqueId]
                 return@registerContext user.data.removeHome(name)
             }
 
@@ -66,8 +77,8 @@ class XCore : JavaPlugin() {
             registerCommand(VanishCommand(vanishManager))
         }
 
-        reloadableComponents = listOf(
-            Lang.Companion, Settings, vanishManager,
+        reloadableComponents = arrayOf(
+            LangKey.Companion, Settings, vanishManager,
         )
 
         if (reloading && Bukkit.getOnlinePlayers().isNotEmpty()) {

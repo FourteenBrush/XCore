@@ -11,7 +11,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.fourteendoggo.xcore.user.User
 import me.fourteendoggo.xcore.user.sendMessage
-import me.fourteendoggo.xcore.utils.Lang
+import me.fourteendoggo.xcore.utils.LangKey
 import me.fourteendoggo.xcore.utils.Utils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -30,16 +30,16 @@ class VanishCommand(private val vanishManager: VanishManager) : BaseCommand() {
     @Subcommand("enable|on")
     fun onVanish(sender: User) {
         when (vanishManager.vanish(sender, true)) {
-            true -> sender.sendMessage(Lang.VANISH_ENABLED)
-            false -> sender.sendMessage(Lang.VANISH_ALREADY_VANISHED)
+            true -> sender.sendMessage(LangKey.VANISH_ENABLED)
+            false -> sender.sendMessage(LangKey.VANISH_ALREADY_VANISHED)
         }
     }
 
     @Subcommand("disable|off")
     fun onUnvanish(sender: User) {
         when (vanishManager.unvanish(sender, check = true, makePersistent = true)) {
-            true -> sender.sendMessage(Lang.VANISH_DISABLED)
-            false -> sender.sendMessage(Lang.VANISH_ALREADY_VISIBLE)
+            true -> sender.sendMessage(LangKey.VANISH_DISABLED)
+            false -> sender.sendMessage(LangKey.VANISH_ALREADY_VISIBLE)
         }
     }
 
@@ -49,8 +49,8 @@ class VanishCommand(private val vanishManager: VanishManager) : BaseCommand() {
     fun onVanishOther(sender: CommandSender, target: User) {
         val targetName = target.player.name
         when (vanishManager.vanish(target, true)) {
-            true -> sender.sendMessage(Lang.VANISH_ENABLED_FOR_OTHER, targetName)
-            false -> sender.sendMessage(Lang.VANISH_OTHER_ALREADY_VANISHED, targetName)
+            true -> sender.sendMessage(LangKey.VANISH_ENABLED_FOR_OTHER, targetName)
+            false -> sender.sendMessage(LangKey.VANISH_OTHER_ALREADY_VANISHED, targetName)
         }
     }
 
@@ -60,8 +60,8 @@ class VanishCommand(private val vanishManager: VanishManager) : BaseCommand() {
     fun onUnvanishOther(sender: CommandSender, target: User) {
         val targetName = target.player.name
         when (vanishManager.unvanish(target, check = true, makePersistent = true)) {
-            true -> sender.sendMessage(Lang.VANISH_DISABLED_FOR_OTHER, targetName)
-            false -> sender.sendMessage(Lang.VANISH_OTHER_ALREADY_VISIBLE, targetName)
+            true -> sender.sendMessage(LangKey.VANISH_DISABLED_FOR_OTHER, targetName)
+            false -> sender.sendMessage(LangKey.VANISH_OTHER_ALREADY_VISIBLE, targetName)
         }
     }
 
@@ -69,7 +69,7 @@ class VanishCommand(private val vanishManager: VanishManager) : BaseCommand() {
     fun onList(sender: CommandSender) {
         val vanishedPlayers = vanishManager.map { Bukkit.getPlayer(it)!! }
         if (vanishedPlayers.isEmpty()) {
-            sender.sendMessage(Lang.VANISH_NOBODY_VANISHED)
+            sender.sendMessage(LangKey.VANISH_NOBODY_VANISHED)
             return
         }
 
